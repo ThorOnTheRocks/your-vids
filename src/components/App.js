@@ -10,6 +10,10 @@ class App extends React.Component {
 
   state = { videos: [], selectedVideo: null }
 
+  componentDidMount() {
+    this.onQuerySubmit('crypto')
+  }
+
   onQuerySubmit = async query => {
     const res = await youtube.get('/search', {
       params: {
@@ -26,7 +30,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="ui container">
+      <div className="ui container" style={{ marginTop: '30px' }}>
         <SearchBar onQuerySubmit={this.onQuerySubmit} />
         <div className="ui grid">
           <div className="ui row">
