@@ -1,50 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Components
 import SearchBar from './SearchBar';
-import youtube from '../api/youtube';
 import VideoList from './VideoList';
 import VideoDetail from './VideoDetail';
 
-class App extends React.Component {
+// Hooks
+import useVideo from '../hooks/useVideo';
 
-  state = { videos: [], selectedVideo: null }
+const App = () => {
 
-  componentDidMount() {
-    this.onQuerySubmit('crypto')
-  }
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [videos, search] = useVideo('crypto')
 
-  onQuerySubmit = async query => {
-    const res = await youtube.get('/search', {
-      params: {
-        q: query
-      }
-    })
+  useEffect(() => {
+    setSelectedVideo(videos[0])
+  }, [videos])
 
-    this.setState({ videos: res.data.items, selectedVideo: res.data.items[0] })
-  };
-
-  onVideoSelect = (video) => {
-    this.setState({ selectedVideo: video })
-  }
-
-  render() {
-    return (
-      <div className="ui container" style={{ marginTop: '30px' }}>
-        <SearchBar onQuerySubmit={this.onQuerySubmit} />
-        <div className="ui grid">
-          <div className="ui row">
-            <div className="eleven wide column">
-              <VideoDetail video={this.state.selectedVideo} />
-            </div>
-            <div className=" five wide column">
-              <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos} />
-            </div>
+  return (
+    <div className="ui container" style={{ marginTop: '30px' }}>
+      <SearchBar onQuerySubmit={search} />
+      <div className="ui grid">
+        <div className="ui row">
+          <div className="eleven wide column">
+            <VideoDetail video={selectedVideo} />
+          </div>
+          <div className=" five wide column">
+            <VideoList onVideoSelect={setSelectedVideo} videos={videos} />
           </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  )
 }
+
 
 export default App;
